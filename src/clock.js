@@ -25,28 +25,32 @@
 'use strict';
 
 angular.module('adf.widgets.clock', ['adf.provider'])
-  .config(function(dashboardProvider, widgetPath){
+  .config(function(dashboardProvider){
     dashboardProvider
       .widget('clock', {
         title: 'Clock',
         description: 'Displays date and time',
-        templateUrl: widgetPath + 'clock/src/view.html',
-        controller: 'clockCtrl',
+        templateUrl: '{widgetsPath}clock/src/view.html',
+        controller: 'clockController',
         controllerAs: 'clock',
+        config: {
+          timePattern: 'HH:mm:ss',
+          datePattern: 'YYYY-MM-DD'
+        },
         edit: {
-          templateUrl: widgetPath + 'clock/src/edit.html',
+          templateUrl: '{widgetsPath}clock/src/edit.html'
         }
       });
   })
   .controller('clockController', function($interval, config){
     var clock = this;
 
-    setDateAndTime function(){
-      var d = new Date();
+    function setDateAndTime(){
+      var d = new moment();
       clock.time = d.format(config.timePattern);
       clock.date = d.format(config.datePattern);
     }
-    
+
     setDateAndTime();
     // refresh every second
     $interval(setDateAndTime, 1000);
