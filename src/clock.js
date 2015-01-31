@@ -24,7 +24,7 @@
 
 'use strict';
 
-angular.module('adf.widgets.clock', ['adf.provider'])
+angular.module('adf.widget.clock', ['adf.provider'])
   .config(function(dashboardProvider){
     dashboardProvider
       .widget('clock', {
