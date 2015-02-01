@@ -27,10 +27,11 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var rimraf = require('rimraf');
 var jsReporter = require('jshint-stylish');
+var pkg = require('./package.json');
 
 var templateOptions = {
-  root: '{widgetsPath}clock/src',
-  module: 'adf.widgets.clock'
+  root: '{widgetsPath}/clock/src',
+  module: 'adf.widget.clock'
 };
 
 gulp.task('csslint', function(){
@@ -53,7 +54,7 @@ gulp.task('clean', function(cb){
 
 gulp.task('css', function(){
   gulp.src('src/*.css')
-      .pipe($.concat('clock.min.css'))
+      .pipe($.concat(pkg.name + '.min.css'))
       .pipe($.minifyCss())
       .pipe(gulp.dest('dist/'));
 });
@@ -61,9 +62,9 @@ gulp.task('css', function(){
 gulp.task('js', function() {
   gulp.src(['src/*.js', 'src/*.html'])
       .pipe($.if('*.html', $.minifyHtml()))
-      .pipe($.if('*.html', $.angularTemplatecache('clock.tpl.js', templateOptions)))
+      .pipe($.if('*.html', $.angularTemplatecache(pkg.name + '.tpl.js', templateOptions)))
       .pipe($.ngAnnotate())
-      .pipe($.concat('clock.min.js'))
+      .pipe($.concat(pkg.name + '.min.js'))
       .pipe($.uglify())
       .pipe(gulp.dest('dist/'));
 });

@@ -1,5 +1,5 @@
 {
-  "name": "adf-clock",
+  "name": "adf-widget-clock",
   "version": "0.1.0-SNAPSHOT",
   "devDependencies": {
     "gulp": "^3.8.10",

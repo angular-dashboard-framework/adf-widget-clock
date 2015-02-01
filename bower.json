@@ -1,18 +1,16 @@
 {
-  "name": "adf-clock",
+  "name": "adf-widget-clock",
   "version": "0.1.0-SNAPSHOT",
-  "main": "dist/adf-clock.js",
+  "main": "dist/adf-widget-clock.js",
   "ignore": [
     "bower.json",
     ".bowerrc",
+    ".jshintrc",
     ".gitignore",
-    "Gruntfile.js",
+    "gulpfile.js",
     "node_modules",
     "package.json",
-    "sample",
-    "src",
-    ".tmp",
-    "dist/docs"
+    "src"
   ],
   "dependencies": {
     "moment": "2.9.0"
