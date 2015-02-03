@@ -42,7 +42,7 @@ angular.module('adf.widget.clock', ['adf.provider'])
         }
       });
   })
-  .controller('clockController', function($interval, config){
+  .controller('clockController', function($scope, $interval, config){
     var clock = this;
 
     function setDateAndTime(){
@@ -52,6 +52,12 @@ angular.module('adf.widget.clock', ['adf.provider'])
     }
 
     setDateAndTime();
+
     // refresh every second
-    $interval(setDateAndTime, 1000);
+    var promise = $interval(setDateAndTime, 1000);
+
+    // cancel interval on scope destroy
+    $scope.$on('$destroy', function(){
+      $interval.cancel(promise);
+    });
   });
