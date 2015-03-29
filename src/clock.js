@@ -24,13 +24,13 @@
 
 'use strict';
 
-angular.module('adf.widgets.clock', ['adf.provider'])
+angular.module('adf.widget.clock', ['adf.provider'])
   .config(function(dashboardProvider){
     dashboardProvider
       .widget('clock', {
         title: 'Clock',
         description: 'Displays date and time',
-        templateUrl: '{widgetsPath}clock/src/view.html',
+        templateUrl: '{widgetsPath}/clock/src/view.html',
         controller: 'clockController',
         controllerAs: 'clock',
         config: {
@@ -38,7 +38,7 @@ angular.module('adf.widgets.clock', ['adf.provider'])
           datePattern: 'YYYY-MM-DD'
         },
         edit: {
-          templateUrl: '{widgetsPath}clock/src/edit.html'
+          templateUrl: '{widgetsPath}/clock/src/edit.html'
         }
       });
   })

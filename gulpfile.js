@@ -1,71 +1,104 @@
-/*
- * The MIT License
- *
- * Copyright (c) 2015, Sebastian Sdorra
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
-
 var gulp = require('gulp');
+var connect = require('gulp-connect');
+var wiredep = require('wiredep').stream;
 var $ = require('gulp-load-plugins')();
-var rimraf = require('rimraf');
+var del = require('del');
 var jsReporter = require('jshint-stylish');
+var annotateAdfPlugin = require('ng-annotate-adf-plugin');
+var pkg = require('./package.json');
 
-var templateOptions = {
-  root: '{widgetsPath}clock/src',
-  module: 'adf.widgets.clock'
+var annotateOptions = {
+  plugin: [
+    annotateAdfPlugin
+  ]
 };
 
+var templateOptions = {
+  root: '{widgetsPath}/clock/src',
+  module: 'adf.widget.clock'
+};
+
+/** lint **/
+
 gulp.task('csslint', function(){
-  gulp.src('src/*.css')
+  gulp.src('src/**/*.css')
       .pipe($.csslint())
       .pipe($.csslint.reporter());
 });
 
 gulp.task('jslint', function(){
-  gulp.src('src/*.js')
+  gulp.src('src/**/*.js')
       .pipe($.jshint())
       .pipe($.jshint.reporter(jsReporter));
 });
 
 gulp.task('lint', ['csslint', 'jslint']);
 
-gulp.task('clean', function(cb){
-  rimraf('dist', cb);
+/** serve **/
+
+gulp.task('templates', function(){
+  return gulp.src('src/**/*.html')
+             .pipe($.angularTemplatecache('templates.tpl.js', templateOptions))
+             .pipe(gulp.dest('.tmp/dist'));
 });
 
+gulp.task('sample', ['templates'], function(){
+  var files = gulp.src(['src/**/*.js', 'src/**/*.css', 'src/**/*.less', '.tmp/dist/*.js'])
+                  .pipe($.if('*.js', $.angularFilesort()));
+
+  gulp.src('sample/index.html')
+      .pipe(wiredep({
+        directory: './components/',
+        bowerJson: require('./bower.json'),
+        devDependencies: true,
+        dependencies: true
+      }))
+      .pipe($.inject(files))
+      .pipe(gulp.dest('.tmp/dist'))
+      .pipe(connect.reload());
+});
+
+gulp.task('watch', function(){
+  gulp.watch(['src/**'], ['sample']);
+});
+
+gulp.task('serve', ['watch', 'sample'], function(){
+  connect.server({
+    root: ['.tmp/dist', '.'],
+    livereload: true,
+    port: 9002
+  });
+});
+
+/** build **/
+
 gulp.task('css', function(){
-  gulp.src('src/*.css')
-      .pipe($.concat('clock.min.css'))
+  gulp.src(['src/**/*.css', 'src/**/*.less'])
+      .pipe($.if('*.less', $.less()))
+      .pipe($.concat(pkg.name + '.css'))
+      .pipe(gulp.dest('dist'))
+      .pipe($.rename(pkg.name + '.min.css'))
       .pipe($.minifyCss())
-      .pipe(gulp.dest('dist/'));
+      .pipe(gulp.dest('dist'));
 });
 
 gulp.task('js', function() {
-  gulp.src(['src/*.js', 'src/*.html'])
+  gulp.src(['src/**/*.js', 'src/**/*.html'])
       .pipe($.if('*.html', $.minifyHtml()))
-      .pipe($.if('*.html', $.angularTemplatecache('clock.tpl.js', templateOptions)))
-      .pipe($.ngAnnotate())
-      .pipe($.concat('clock.min.js'))
+      .pipe($.if('*.html', $.angularTemplatecache(pkg.name + '.tpl.js', templateOptions)))
+      .pipe($.angularFilesort())
+      .pipe($.concat(pkg.name + '.js'))
+      .pipe(gulp.dest('dist'))
+      .pipe($.rename(pkg.name + '.min.js'))
+      .pipe($.ngAnnotate(annotateOptions))
       .pipe($.uglify())
-      .pipe(gulp.dest('dist/'));
+      .pipe(gulp.dest('dist'));
+});
+
+/** clean **/
+
+gulp.task('clean', function(cb){
+  del(['dist', '.tmp'], cb);
 });
 
 gulp.task('default', ['css', 'js']);

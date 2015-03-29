@@ -1,20 +1,30 @@
 {
-  "name": "adf-clock",
-  "version": "0.1.0-SNAPSHOT",
-  "main": "dist/adf-clock.js",
+  "name": "adf-widget-clock",
+  "version": "0.1.0",
+  "main": "dist/adf-widget-clock.js",
   "ignore": [
     "bower.json",
     ".bowerrc",
+    ".jshintrc",
     ".gitignore",
-    "Gruntfile.js",
+    "gulpfile.js",
     "node_modules",
     "package.json",
-    "sample",
-    "src",
-    ".tmp",
-    "dist/docs"
+    "components",
+    "src"
   ],
+  "keywords": [
+    "dashboard",
+    "widget",
+    "adf",
+    "adf-widget"
+  ],
+  "description": "Configurable clock widget",
   "dependencies": {
+    "angular-dashboard-framework": "0.7.0",
     "moment": "2.9.0"
+  },
+  "devDependencies": {
+    "angular-local-storage": "0.1.5"
   }
 }
