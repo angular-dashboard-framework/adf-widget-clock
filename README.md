@@ -48,6 +48,7 @@ Include the script in your index.html and be sure it is loaded after [angular](h
 
 ```html
 <link href="bower_components/adf-widget-clock/dist/adf-widget-clock.min.css" rel="stylesheet">
+<script type="text/javascript" src="bower_components/moment/moment.js"></script>
 <script type="text/javascript" src="bower_components/adf-widget-clock/dist/adf-widget-clock.min.js"></script>
 ```
 
